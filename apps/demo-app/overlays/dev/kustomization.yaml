@@ -5,7 +5,7 @@ resources:
   - ../../base
 replicas:
   - name: demo-app
-    count: 1
+    count: 2
 images:
   - name: nginx
     newTag: "1.27"
