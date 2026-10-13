@@ -1,0 +1,45 @@
+name: promote-to-prod
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  IMAGE: ghcr.io/edinaprado/demo-app
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lê a tag atual do dev
+        id: tag
+        run: |
+          TAG=$(grep newTag apps/demo-app/overlays/dev/kustomization.yaml | awk '{print $2}' | tr -d '"')
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Atualiza o overlay prod
+        run: |
+          cd apps/demo-app/overlays/prod
+          kustomize edit set image nginx=${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
+
+      - name: Abre o pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          SHORT=${TAG:0:7}
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "promote-$SHORT"
+          git commit -am "promote: prod usa $SHORT"
+          git push -u origin "promote-$SHORT"
+          gh pr create \
+            --base main \
+            --head "promote-$SHORT" \
+            --title "Promover $SHORT para prod" \
+            --body "Promove a imagem \`$TAG\`, já validada em dev, para o ambiente prod."
