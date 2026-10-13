@@ -1,4 +1,4 @@
-# GitOps Platform
+# GitOps Plataform
 
 Pipeline GitOps completo rodando localmente em um cluster **kind**: o Git é a única fonte da verdade, o **ArgoCD** mantém o cluster sincronizado e o **GitHub Actions** cuida do build e da promoção entre ambientes.
 
