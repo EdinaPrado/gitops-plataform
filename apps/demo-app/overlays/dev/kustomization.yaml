@@ -9,4 +9,4 @@ replicas:
 images:
 - name: nginx
   newName: ghcr.io/edinaprado/demo-app
-  newTag: cf4dc3533cde63e549251047ebbaa2041b7744d7
+  newTag: 125a98cf05a48dc4dac3e0b3c8bbe8456abfe762
