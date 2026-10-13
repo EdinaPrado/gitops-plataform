@@ -2,7 +2,7 @@
 
 Pipeline GitOps completo rodando localmente em um cluster **kind**: o Git é a única fonte da verdade, o **ArgoCD** mantém o cluster sincronizado e o **GitHub Actions** cuida do build e da promoção entre ambientes.
 
-![ArgoCD com as aplicações sincronizadas](docs/02-apps-synced.png)
+![ArgoCD com as aplicações dev e prod](docs/02-apps-synced.png)
 
 ## O problema
 
@@ -86,25 +86,15 @@ Para ver a app: `kubectl port-forward svc/demo-app -n demo-dev 8081:80` (dev) ou
 
 ## Evidências
 
-**1. Pipeline de dev: build, commit da tag e sync automático**
+**ArgoCD antes e depois de criar as Applications**
 
-![Workflow de CI](docs/08-actions.png)
+| Sem aplicações | Com `demo-app-dev` e `demo-app-prod` |
+|---|---|
+| ![ArgoCD vazio](docs/01-argocd-vazio.png) | ![ArgoCD com as aplicações](docs/02-apps-synced.png) |
 
-**2. Self-heal: alterei as réplicas direto no cluster e o ArgoCD desfez**
+**Promoção para prod via pull request**
 
-```bash
-kubectl scale deployment demo-app -n demo-prod --replicas=1
-```
-
-![Self-heal](docs/03-selfheal.png)
-
-**3. Promoção para prod via pull request**
-
-O workflow `promote-to-prod` lê a tag validada em dev e abre um PR alterando só o overlay de prod.
-
-![PR de promoção](docs/06-pr-promocao.png)
-
-**4. Antes e depois da promoção**
+O workflow `promote-to-prod` lê a tag validada em dev e abre um PR alterando só o overlay de prod. Depois do merge, o ArgoCD atualiza o prod.
 
 | Prod antes (nginx padrão) | Prod depois (demo-app v2) |
 |---|---|
