@@ -2,10 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: demo-dev
 resources:
-  - ../../base
+- ../../base
 replicas:
-  - name: demo-app
-    count: 2
+- count: 2
+  name: demo-app
 images:
-  - name: nginx
-    newTag: "1.27"
+- name: nginx
+  newName: ghcr.io/edinaprado/demo-app
+  newTag: cf4dc3533cde63e549251047ebbaa2041b7744d7
